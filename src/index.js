@@ -10,7 +10,8 @@ dotenv.config({
 
 
 
-connectDb().then(()=>{
+connectDb()
+.then(()=>{
     app.listen(PORT, ()=>{
 
         console.log(`DB Connected Succesfully at Port No : ${PORT}`);    
