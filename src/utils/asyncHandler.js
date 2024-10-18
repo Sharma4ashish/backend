@@ -9,30 +9,21 @@ const asyncFuncHandler = (requestHandler) => {
 
 
 
-
-
-
-
-
-
-
-
-
-const asyncHandler = (fn) => {
+// const asyncHandler = (fn) => {
     
-    async (req, res, next)=>{
-        try {
-            await fn(req,res,next);
+//     async (req, res, next)=>{
+//         try {
+//             await fn(req,res,next);
             
-        } catch (error) {
-            res.status(error.code || 500 ).json({
-                succses : false,
-                message: error.message
-            })
+//         } catch (error) {
+//             res.status(error.code || 500 ).json({
+//                 succses : false,
+//                 message: error.message
+//             })
             
-        }
-    }
-}
+//         }
+//     }
+// }
 
 
-export {asyncHandler}
+export {asyncFuncHandler}
