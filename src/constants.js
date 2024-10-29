@@ -1,4 +1,4 @@
 const  DB_NAME = "videotweet";
 
 
- export default DB_NAME
+ export { DB_NAME}

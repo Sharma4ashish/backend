@@ -27,32 +27,43 @@ const userRegister = asyncFuncHandler( async (req,res) =>{
 
 
     
-    const exitedUser = User.findOne({
+    const exitedUser = await User.findOne({
         $or : [{email},{username}]
     })
 
     if(exitedUser) {
      throw new ApiError(409,"User with email or username already exists")
     }
+    
+    console.log(req.files);
+    
+    const coverImageLoacalFilePath = "";
+    if (req.files.coverImage) {
+        
+        coverImageLoacalFilePath = req.files?.coverImage[0]?.path;
+    }
 
     const avatarLoacalFilePath = req.files?.avatar[0]?.path;
-    const coverImageLoacalFilePath = req.files?.coverImage[0]?.path;
     
 
-    if (avatarLoacalFilePath) {
+    if (!avatarLoacalFilePath) {
+                
         throw new ApiError(400, "avatarLoacalFilePath is required")
         
     }
+
+    
+
     const avatar = await uploadOnCloudinary(avatarLoacalFilePath);
     const coverImage = await uploadOnCloudinary(coverImageLoacalFilePath);
 
-    if (avatar) {
+    if (!avatar) {
         throw new ApiError(400 , "avatar file requiered")
         
     }
 
 
-    User.create({
+    const user = await User.create({
         fullname,
         email,
         username : username.toLowerCase(),
@@ -62,8 +73,26 @@ const userRegister = asyncFuncHandler( async (req,res) =>{
 
 
     })
+
+    const createdUser = await User.findById(user._id).select(" -password -accessToken")
+
     
-    return res.status(200).json({message:"ok"})
+    if (!createdUser) {
+        throw new ApiError(400,"Something went Wrong While creating user")
+        
+    }
+
+    return res
+    .status(200)
+    .json(new ApiResponse(
+            200,
+            {
+                createdUser,
+
+            }, 
+            "User Created Succesfully"
+        )
+    )
 
     
 })
@@ -95,9 +124,9 @@ const userLogin = asyncFuncHandler(async (req,res) =>{
     // check password
     // create jwt tokens 
     // send cookeis to browser
-    const {email, usename , password } =  req.body; 
+    const {email, username , password } =  req.body; 
 
-    if (!username || !email) {
+    if (!(username || email)) {
         throw new ApiError(400, "Username or Email Required")
     }
     const user = User.findOne({
@@ -139,7 +168,26 @@ const userLogin = asyncFuncHandler(async (req,res) =>{
 
 
 const logOutUser = asyncFuncHandler(async (req,res)=>{
-    res.cookies?.accessToken 
+
+    await User.findByIdAndUpdate(
+        req.user?._id,
+        {
+            $set:{
+                refreshToken : undefined
+
+            }
+        },
+    )
+    
+    const cookieOption = {
+        httpOnly:true,
+        secure: true,
+    } 
+
+    res.status(200)
+    .clearCookie(accessToken,cookieOption)
+    .clearCookie(refreshToken,cookieOption)
+    .json(new ApiResponse(200,{},"user Logged out "))
 }) 
 
 

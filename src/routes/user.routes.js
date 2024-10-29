@@ -25,6 +25,8 @@ router.route("/logout").post(logOutUser)
 
 
 
-// router.route("/login").get(userLogin) 
+router.route("/login").get((_,res)=>{
+    res.send("login page")
+}) 
 
 export default router;
