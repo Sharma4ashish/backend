@@ -16,7 +16,7 @@ const userRegister = asyncFuncHandler(async (req, res) => {
   // return res
 
   const { username, fullname, email, password } = req.body;
-  console.log(username);
+  // console.log(username);
 
   if (
     [username, email, fullname, password].some((item) => item?.trim() === "")
@@ -32,7 +32,7 @@ const userRegister = asyncFuncHandler(async (req, res) => {
     throw new ApiError(409, "User with email or username already exists");
   }
 
-  console.log(req.files);
+  // console.log(req.files);
 
   const coverImageLoacalFilePath = "";
   if (req.files.coverImage) {
@@ -166,5 +166,7 @@ const logOutUser = asyncFuncHandler(async (req, res) => {
     .clearCookie(refreshToken, cookieOption)
     .json(new ApiResponse(200, {}, "user Logged out "));
 });
+
+const refreshingAccessToken = asyncFuncHandler((req, res) => {});
 
 export { userRegister, logOutUser, userLogin };

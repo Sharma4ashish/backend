@@ -70,7 +70,7 @@ userSchema.methods.generateAccessToken = async function(payload){
     })
 } 
 
-userSchema.methods.generateAccessToken = async function(payload){
+userSchema.methods.generateRefreshToken = async function(payload){
     
     await jwt.sign({
         _id : this._id,
